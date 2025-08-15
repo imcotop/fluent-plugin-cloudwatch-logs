@@ -317,6 +317,10 @@ module Fluent::Plugin
           log_streams = response.log_streams
         end
         if response.next_token
+          # Add sleep to avoid API throttling when paginating
+          if log_stream_name_prefix == get_todays_date || log_stream_name_prefix == get_yesterdays_date
+            sleep 0.2
+          end
           log_streams = describe_log_streams(log_stream_name_prefix, log_streams, response.next_token, log_group_name)
         end
         log_streams
@@ -348,6 +352,10 @@ module Fluent::Plugin
         log_groups = response.log_groups
       end
       if response.next_token
+        # Add sleep to avoid API throttling when paginating
+        if log_group_name_prefix == get_todays_date || log_group_name_prefix == get_yesterdays_date
+          sleep 0.2
+        end
         log_groups = describe_log_groups(log_group_name_prefix, log_groups, response.next_token)
       end
       log_groups
